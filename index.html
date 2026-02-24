@@ -1,122 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexa AI | Command System</title>
-    <style>
-        body {
-            background-color: #0a0a0a;
-            color: #00ffcc;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        #nexa-core {
-            width: 150px;
-            height: 150px;
-            border: 4px solid #00ffcc;
-            border-radius: 50%;
-            box-shadow: 0 0 20px #00ffcc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        #nexa-core.listening {
-            animation: pulse 1.5s infinite;
-            background-color: #00ffcc22;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 20px #00ffcc; }
-            50% { transform: scale(1.1); box-shadow: 0 0 40px #00ffcc; }
-            100% { transform: scale(1); box-shadow: 0 0 20px #00ffcc; }
-        }
-
-        #status { margin-top: 20px; font-size: 1.2rem; }
-        #transcript { color: #888; margin-top: 10px; font-style: italic; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div id="nexa-core" onclick="startNexa()">
-        <span>NEXA</span>
+    <div class="interface">
+        <h2>NEXA v1.0</h2>
+        <div class="orb-container">
+            <div class="orb"></div>
+        </div>
+        <p id="status">OFFLINE</p>
+        <button onclick="startNexa()">Initialize</button>
     </div>
-
-    <div id="status">Click the core to wake Nexa</div>
-    <div id="transcript"></div>
-
-    <script>
-        // Check for Browser Support
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const synth = window.speechSynthesis;
-
-        if (!SpeechRecognition) {
-            alert("Your browser does not support Web Speech API. Try Chrome or Edge.");
-        }
-
-        const recognition = new SpeechRecognition();
-        const statusDisp = document.getElementById('status');
-        const transcriptDisp = document.getElementById('transcript');
-        const core = document.getElementById('nexa-core');
-
-        // Nexa's Voice
-        function speak(text) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.pitch = 1;
-            utterance.rate = 1;
-            synth.speak(utterance);
-            statusDisp.innerText = "Nexa: " + text;
-        }
-
-        function startNexa() {
-            recognition.start();
-            core.classList.add('listening');
-            statusDisp.innerText = "Listening...";
-        }
-
-        recognition.onresult = (event) => {
-            const command = event.results[0][0].transcript.toLowerCase();
-            transcriptDisp.innerText = `You said: "${command}"`;
-            core.classList.remove('listening');
-            processCommand(command);
-        };
-
-        // Nexa Logic
-        function processCommand(cmd) {
-            if (cmd.includes('time')) {
-                const now = new Date().toLocaleTimeString();
-                speak(`The current time is ${now}`);
-            } 
-            else if (cmd.includes('hello') || cmd.includes('nexa')) {
-                speak("Hello. I am Nexa. How can I assist you today?");
-            } 
-            else if (cmd.includes('search for')) {
-                const query = cmd.split('search for')[1];
-                speak(`Searching Google for ${query}`);
-                window.open(`https://www.google.com/search?q=${query}`, '_blank');
-            }
-            else if (cmd.includes('open youtube')) {
-                speak("Opening YouTube.");
-                window.open("https://www.youtube.com", "_blank");
-            }
-            else {
-                speak("Command not recognized. Please try again.");
-            }
-        }
-
-        recognition.onerror = () => {
-            core.classList.remove('listening');
-            statusDisp.innerText = "Error occurred. Try again.";
-        };
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
